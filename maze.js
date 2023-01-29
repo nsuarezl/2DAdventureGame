@@ -64,13 +64,17 @@ var startRow = Math.floor(Math.random() * rows);
 var startCol = Math.floor(Math.random() * cols);
 generateMaze(startRow, startCol);
 
+function bricks(x,y){
+  ctx.fillStyle = "rgba(234,170,0, 1)";
+  ctx.fillRect(x * 64, y * 64, 64, 64);
+  ctx.fillStyle = "rgba(200,170,0, 1)";
+  ctx.fillRect(x * 64 + 5, y * 64 + 5, 54, 54);
+}
+
 for (var y = 0; y < maze.length; y++) {
   for (var x = 0; x < maze[y].length; x++) {
     if (maze[y][x] === 1) {
-      ctx.fillStyle = "rgba(234,170,0, 1)";
-      ctx.fillRect(x * 64, y * 64, 64, 64);
-      ctx.fillStyle = "rgba(200,170,0, 1)";
-      ctx.fillRect(x * 64 + 5, y * 64 + 5, 54, 54);
+      bricks(x,y)
       
       ctx.fillStyle = "brown";
       ctx.fillRect(x * 64 + 22, y * 64 + 44, 20, 20);
@@ -84,10 +88,7 @@ for (var y = 0; y < maze.length; y++) {
       ctx.fill();
     } else {
       // Draw the interior of the maze
-      ctx.fillStyle = "rgba(234,170,0, 1)";
-      ctx.fillRect(x * 64, y * 64, 64, 64);
-      ctx.fillStyle = "rgba(200,170,0, 1)";
-      ctx.fillRect(x * 64 + 5, y * 64 + 5, 54, 54);
+      bricks(x,y)
     }
     // Check if the current position is on the border of the maze
     if (y === 0 || y === maze.length - 1 || x === 0 || x === maze[y].length - 1) {
