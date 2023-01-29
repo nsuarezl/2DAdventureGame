@@ -64,26 +64,38 @@ var startRow = Math.floor(Math.random() * rows);
 var startCol = Math.floor(Math.random() * cols);
 generateMaze(startRow, startCol);
 
-// Draw the maze on the canvas
-for (var row = 0; row < maze.length; row++) {
-  for (var col = 0; col < maze[row].length; col++) {
-    if (maze[row][col] === 1) {
-    //   ctx.fillStyle = "black";
-    //   ctx.fillRect(row * 64, col * 64, 64, 64);
-    ctx.fillStyle = "brown";
-        ctx.fillRect(row * 64 + 22, col * 64 + 44, 20, 20);
-        
-        // Draw the tree crown
-        ctx.beginPath();
-        ctx.arc(row * 64 + 42, col * 64 + 30, 20, 0, 2 * Math.PI);
-        ctx.arc(row * 64 + 20, col * 64 + 30, 20, 0, 2 * Math.PI);
-        ctx.arc(row * 64 + 30, col * 64 + 20, 20, 0, 2 * Math.PI);
-        ctx.fillStyle = "green";
-        ctx.fill();
+for (var y = 0; y < maze.length; y++) {
+  for (var x = 0; x < maze[y].length; x++) {
+    if (maze[y][x] === 1) {
+      ctx.fillStyle = "rgba(234,170,0, 1)";
+      ctx.fillRect(x * 64, y * 64, 64, 64);
+      ctx.fillStyle = "rgba(200,170,0, 1)";
+      ctx.fillRect(x * 64 + 5, y * 64 + 5, 54, 54);
+      
+      ctx.fillStyle = "brown";
+      ctx.fillRect(x * 64 + 22, y * 64 + 44, 20, 20);
+      
+      // Draw the tree crown
+      ctx.beginPath();
+      ctx.arc(x * 64 + 42, y * 64 + 30, 20, 0, 2 * Math.PI);
+      ctx.arc(x * 64 + 20, y * 64 + 30, 20, 0, 2 * Math.PI);
+      ctx.arc(x * 64 + 30, y * 64 + 20, 20, 0, 2 * Math.PI);
+      ctx.fillStyle = "green";
+      ctx.fill();
     } else {
-        ctx.fillStyle = "rgb(255,160,2)";
-        ctx.fillRect(row * 64, col * 64, 64, 64);
+      // Draw the interior of the maze
+      ctx.fillStyle = "rgba(234,170,0, 1)";
+      ctx.fillRect(x * 64, y * 64, 64, 64);
+      ctx.fillStyle = "rgba(200,170,0, 1)";
+      ctx.fillRect(x * 64 + 5, y * 64 + 5, 54, 54);
     }
-  
+    // Check if the current position is on the border of the maze
+    if (y === 0 || y === maze.length - 1 || x === 0 || x === maze[y].length - 1) {
+      // Draw the border of the maze with red brick texture
+      ctx.fillStyle = "rgba(255, 0, 0, 1)";
+      ctx.fillRect(x * 64, y * 64, 64, 64);
+      ctx.fillStyle = "rgba(150, 0, 0, 0.5)";
+      ctx.fillRect(x * 64 + 5, y * 64 + 5, 54, 54);
+    }
   }
 }
