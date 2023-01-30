@@ -72,13 +72,20 @@ class Maze {
         enemy1.draw();
         enemy2.draw();
     }
+    addPotion(potion,potion1){
+        potion.draw();
+        potion1.draw();
+    }
   }
 
 
 class Entity{
 
-    constructor(health){
-        this.health = 100;
+    constructor(health,maxHealth,atk,def){
+        this.health = 500;
+        this.maxHealth=1000;
+        this.atk=50;
+        this.def=20;
     }
 
     draw() {
@@ -89,9 +96,18 @@ class Entity{
           this.blockSize,
           this.blockSize
         );
-        this.drawHealthBar();
+        this.drawHealthBar()
       }
-  
+    canMove(){
+        if (this.health>0){
+            
+            return true;
+            
+        }
+        this.color = "black";
+        return false;
+        
+    }
       drawHealthBar() {
           this.maze.ctx.fillStyle = "red";
           this.maze.ctx.fillRect(
@@ -104,108 +120,188 @@ class Entity{
           this.maze.ctx.fillRect(
             this.x * this.blockSize,
             (this.y + 1) * this.blockSize,
-            (this.blockSize * this.health) / 100,
+            (this.blockSize * this.health) / this.maxHealth,
             5
           );
     }
 
-
 }
 
 class Player extends Entity{
-    constructor(maze, x, y, color,health) {
-      super(health);
+    constructor(maze, x, y, color,health,maxHealth,atk,def) {
+      super(health,maxHealth,atk,def);
       this.maze = maze;
       this.x = x;
       this.y = y;
       this.color = color;
       this.blockSize = maze.blockSize;
+      this.attack = (atk-20)*Math.floor(Math.random() * 6)+1;
     }
+
+    checkColission(enemy){
+        if(this.x === enemy.x && this.y === enemy.y)
+            enemy.health-=this.attack;
+    }
+ 
     
     moveUp() {
-        if (this.maze.grid[this.x][this.y-1] !== 1 ) {
-            this.y -= 1;
-            console.log(this.maze.grid[this.x][this.y -1])
+        if(this.canMove()){
+            if (this.maze.grid[this.x][this.y-1] !== 1) {
+                this.y -= 1;
+                this.checkColission(enemy1);
+                this.checkColission(enemy2);
+                this.checkColission(enemy3);
+                    
+            }
         }
     }
   
     moveDown() {
-        if (this.y < this.maze.rows - 1 && this.maze.grid[this.x][this.y+1] !== 1) {
-            this.y += 1;
+        if(this.canMove()){
+            if (this.y < this.maze.rows - 1 && this.maze.grid[this.x][this.y+1] !== 1) {
+                this.y += 1;
+                this.checkColission(enemy1);
+                this.checkColission(enemy2);
+                this.checkColission(enemy3);
+            }
         }
+       
     }
   
     moveLeft() {
-        if (this.x > 0 && this.maze.grid[this.x-1][this.y] !== 1) {
-            this.x -= 1;
+        if(this.canMove()){
+            if (this.x > 0 && this.maze.grid[this.x-1][this.y] !== 1) {
+                this.x -= 1;
+                this.checkColission(enemy1);
+                this.checkColission(enemy2);
+                this.checkColission(enemy3);
+            }
         }
+        
     }
   
     moveRight() {
-        if (this.x < this.maze.cols - 1 && this.maze.grid[this.x+1][this.y] !== 1) {
-            this.x += 1;
+        if(this.canMove()){
+            if (this.x < this.maze.cols - 1 && this.maze.grid[this.x+1][this.y] !== 1) {
+                this.x += 1;
+                this.checkColission(enemy1);
+                this.checkColission(enemy2);
+                this.checkColission(enemy3);
+            }
         }
+        
     }
+    
 }
         
 
 class Enemy extends Entity{
-    constructor(maze, color, startX, startY,health) {
-      super(health)
+    constructor(maze, color, startX, startY,health,maxHealth,atk,def) {
+      super(health,maxHealth,atk,def)
       this.maze = maze;
       this.color = color;
       this.blockSize = this.maze.blockSize;
-      this.health = 100;
       this.x = startX;
       this.y = startY;
+      this.attack = (atk-player.def)*Math.floor(Math.random() * 6)+1;
     }
-    
+    checkColission(player){
+        if(this.x === player.x && this.y === player.y)
+            player.health-=this.attack;
+            console.log(player.health)
+    }
     move() {
       // Generate a random number to determine the direction of movement
       let move = Math.floor(Math.random() * 4);
       switch (move) {
         case 0:
-          if (this.y > 0 && this.maze.grid[this.x][this.y-1] !== 1) {
-            this.y -= 1;
+          if(this.canMove()){
+            if (this.y > 0 && this.maze.grid[this.x][this.y-1] !== 1) {
+                this.y -= 1;
+                this.checkColission(player);
+              }
+              break;
           }
-          break;
+          
         case 1:
-          if (
-            this.y < this.maze.rows - 1 &&
-            this.maze.grid[this.x][this.y+1] !== 1
-          ) {
-            this.y += 1;
+          if(this.canMove()){
+            if (
+                this.y < this.maze.rows - 1 &&
+                this.maze.grid[this.x][this.y+1] !== 1
+              ) {
+                this.y += 1;
+                this.checkColission(player);
+              }
+              break;
           }
-          break;
+          
         case 2:
-          if (this.x > 0 && this.maze.grid[this.x-1][this.y] !== 1) {
-            this.x -= 1;
-          }
-          break;
+        if(this.canMove()){
+            if (this.x > 0 && this.maze.grid[this.x-1][this.y] !== 1) {
+                this.x -= 1;
+                this.checkColission(player);
+              }
+              break;
+        }
+          
         case 3:
-          if (
-            this.x < this.maze.columns - 1 &&
-            this.maze.grid[this.x+1][this.y] !== 1
-          ) {
-            this.x += 1;
+          if(this.canMove()){
+            if (
+                this.x < this.maze.columns - 1 &&
+                this.maze.grid[this.x+1][this.y] !== 1
+              ) {
+                this.x += 1;
+                this.checkColission(player);
+              }
+              break;
           }
-          break;
+          
       }
     }
   }
         
         
         
+class Potions{
+    constructor(reward,color){
+        this.reward = reward;
+        this.color = color
+    }
+    draw() {
+        this.maze.ctx.fillStyle = "purple";
+            this.maze.ctx.fillRect(this.x * 64 + 20, this.y * 64+5, 20, 40);
+            
+            // Draw the tree crown
+            this.maze.ctx.beginPath();
+            this.maze.ctx.arc(this.x * 64 + 42, this.y * 64 + 45, 20, 0, 2 * Math.PI);
+            this.maze.ctx.arc(this.x * 64 + 20, this.y * 64 + 45, 20, 0, 2 * Math.PI);
+            this.maze.ctx.arc(this.x * 64 + 30, this.y * 64 + 35, 20, 0, 2 * Math.PI);
+            this.maze.ctx.fillStyle = "blue";
+            this.maze.ctx.fill();
+    
+    }
+}
 
+class healthPotion extends Potions{
+    constructor(maze,reward,color,x,y){
+        super(reward);
+        this.maze = maze;
+        this.color = color;
+        this.blockSize = this.maze.blockSize;
+        this.x = x;
+        this.y = y;
+    }
+}
   
   const maze = new Maze(16, 16, "maze-canvas");
   maze.generate();
   maze.render();
   
   const player = new Player(maze, 1, 1, "red");
+
         maze.addPlayer(player);
-        
-        document.addEventListener("keydown", (event) => {
+
+    document.addEventListener("keydown", (event) => {
         switch (event.keyCode) {
         case 37:
         player.moveLeft();
@@ -222,10 +318,16 @@ class Enemy extends Entity{
         }
         maze.render();
         player.draw();
+        potion.draw();
+        potion1.draw();
         enemy1.draw();
         enemy2.draw();
         enemy3.draw();
         });
+
+
+
+        
 const enemy1 = new Enemy(maze, "red", 5, 5);
 const enemy2 = new Enemy(maze, "blue", 10, 10);
 const enemy3 = new Enemy(maze, "green", 11, 11);
@@ -238,8 +340,16 @@ setInterval(() => {
     enemy3.move();
     maze.render();
     player.draw();
+    potion.draw();
+    potion1.draw();
     enemy1.draw();
     enemy2.draw();
     enemy3.draw();
-    
+    if(player.health<0){
+        player.color = "black";
+    }
   }, 500);
+
+const potion= new healthPotion(maze,200,"green",11,10);
+const potion1= new healthPotion(maze,200,"blue",11,10);
+maze.addPotion(potion,potion1);
